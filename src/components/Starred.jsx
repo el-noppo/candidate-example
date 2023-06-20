@@ -1,0 +1,50 @@
+import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
+import starredSlice from '../data/starredSlice'
+import Movie from './Movie'
+import '../styles/starred.scss'
+
+/**
+ * Starred react component that displays a list of starred movies and provides a button to remove all starred movies.
+ *
+ * @param {function} viewTrailer - callback function to view the trailer of a movie
+ * @return {JSX.Element} Starred React component
+ */
+const Starred = ({viewTrailer}) => {
+
+    // Get movies updated state from redux store
+    const { starred } = useSelector((state) => state);
+
+    // Dispatches an action to clear all starred movies
+    const { clearAllStarred } = starredSlice.actions;
+    const dispatch = useDispatch();
+
+  return (
+    <div className="starred" data-testid="starred">
+      {starred.starredMovies.length > 0 && (<div data-testid="starred-movies" className="starred-movies">
+        <h6 className="header">Starred movies</h6>
+        <div className="row">
+        {starred.starredMovies.map((movie) => (
+          <Movie 
+            movie={movie} 
+            key={movie.id}
+            viewTrailer={viewTrailer}
+          />
+        ))}
+        </div>
+
+        <footer className="text-center">
+          <button className="btn btn-primary" onClick={() => dispatch(clearAllStarred())}>Remove all starred</button>
+        </footer>
+      </div>)}
+
+      {starred.starredMovies.length === 0 && (<div className="text-center empty-cart">
+        <i className="bi bi-star" />
+        <p>There are no starred movies.</p>
+        <p>Go to <Link to='/'>Home</Link></p>
+      </div>)}
+    </div>
+  )
+}
+
+export default Starred
